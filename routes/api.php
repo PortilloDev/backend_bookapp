@@ -6,23 +6,18 @@ use App\Http\Controllers\Api\TagController;
 use App\Http\Controllers\Api\BookController;
 use Illuminate\Support\Facades\Route;
 
-
-//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//    return $request->user();
-//});
-
-
 Route::post('login', [LoginController::class, 'login'])->name('login');
+
 Route::post('register', [LoginController::class, 'register'])->name('register');
 
 Route::middleware('auth:sanctum')->group(function (){
+    // Auth
+        Route::post('logout', [LoginController::class, 'logout'])->name('logout');
     // Books
         Route::apiResource('books', BookController::class);
-
     // Categories
-        Route::apiResource('categories', CategoryController::class);
-
+        Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
     // Tags
-        Route::apiResource('tags', TagController::class);
+        Route::apiResource('tags', TagController::class)->only(['index', 'show']);
 });
 
