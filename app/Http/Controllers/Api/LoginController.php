@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Login\LoginRequest;
+use App\Http\Requests\Login\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -34,5 +35,41 @@ class LoginController extends Controller
                 'token' => $user->createToken($request->device_name)->plainTextToken
             ],
         ], Response::HTTP_OK);
+    }
+
+    public function register(RegisterRequest $request): JsonResponse
+    {
+        $user = User::where('email', $request->email)->first();
+
+        if ($user) {
+            return response()->json([
+                'message' => 'This email already exists.'
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+
+        }
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'device_name' => $request->device_name
+        ]);
+
+        return response()->json([
+            'data' => [
+                'attributes'=> [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email
+                ]
+            ],
+        ], Response::HTTP_CREATED);
+    }
+
+    public function logout(Request $request): JsonResponse
+    {
+        $request->user()->tokens()->delete();
+
+        return response()->json([], Response::HTTP_OK);
     }
 }
