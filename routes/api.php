@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\ExternalBookController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\TagController;
 use App\Http\Controllers\Api\BookController;
@@ -15,6 +16,8 @@ Route::middleware('auth:sanctum')->group(function (){
         Route::post('logout', [LoginController::class, 'logout'])->name('logout');
     // Books
         Route::apiResource('books', BookController::class);
+    // Get externa books
+        Route::get('external-books/info', [ExternalBookController::class, 'getInfoBooks'])->name('external-books');
     // Categories
         Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
     // Tags
